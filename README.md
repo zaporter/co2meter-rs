@@ -6,6 +6,8 @@ If you like this library, please give your appreciation to Vladimir Filimonov (h
 
 # Supported Features
 [X] basic reading from the sensor
+
 [ ] homekit
+
 [ ] server
 

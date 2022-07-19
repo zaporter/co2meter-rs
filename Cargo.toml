@@ -6,6 +6,7 @@ license = "MIT"
 description = "Rust library to iteract with co2meters. This is an implementation of the CO2meter python libary (https://github.com/vfilimonov/co2meter)"
 repository = "https://github.com/zaporter/co2meter-rs"
 keywords = ["co2","library","interface","meter"]
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
