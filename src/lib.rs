@@ -36,7 +36,7 @@
 
 use std::error::Error;
 
-use chrono::{DateTime, Utc, NaiveDateTime, Local};
+use chrono::{DateTime, Local};
 use hidapi::{HidApi, DeviceInfo, HidDevice};
 
 const CO2MON_HID_VENDOR_ID : u16 = 0x04d9;
@@ -195,7 +195,7 @@ impl CO2Monitor {
         Ok(self.decrypt(data))
     }
     // decrypt the message (used inside hid_read(..))
-    fn decrypt(&self, mut data : [u8;8]) -> [u8;8] {
+    fn decrypt(&self, data : [u8;8]) -> [u8;8] {
         if self.bypass_decrypt{
             return data;
         }
