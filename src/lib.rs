@@ -1,4 +1,3 @@
-
 //! Rust wrapper for co2meter 
 //! 
 //! This is a very basic rust implementation of the co2meter python package by Vladimir Filimonov (<https://github.com/vfilimonov/co2meter>)
@@ -12,23 +11,25 @@
 //! 
 //! # Getting Started
 //!
-//! ```rust
+//! ```ignore
 //! let mut co2 = CO2Monitor::default()?;
 //! let result = co2.read_data(true, 50)?;
 //! dbg!(result);
+//! # Ok(())
+//! # }
 //! ```
 //!
 //! # Get info about your co2 monitor: 
-//! ```rust
+//! ```ignore
 //! let co2 = CO2Monitor::default()?;
-//! let info = co2.get_info();
+//! let info = co2.info();
 //! dbg!(info);
 //! ```
 //! # Specify which co2 monitor you want to read from: 
-//! ```rust
-//! let interface_path = "...".to_owned()// Mine is "1-13:1.0"
+//! ```ignore
+//! let interface_path = "...".to_owned();// Mine is "1-13:1.0"
 //! let co2 = CO2Monitor::new(false, Some(interface_path))?;
-//! let info = co2.get_info();
+//! let info = co2.info();
 //! dbg!(info);
 //! ```
 //!
@@ -146,7 +147,7 @@ impl CO2Monitor {
         })
     }
     /// Return a [CO2MonitorInfo] about the device
-    pub fn get_info(&self) -> CO2MonitorInfo {
+    pub fn info(&self) -> CO2MonitorInfo {
         CO2MonitorInfo { 
             vendor_id: self.device_info.vendor_id(),
             product_id: self.device_info.product_id(),
@@ -280,27 +281,31 @@ impl CO2Monitor {
 #[cfg(test)]
 mod tests{
     use crate::*;
+    use serial_test::serial;
 
     #[test]
     fn compilation() {
         assert_eq!(1+1,2);
     }
     #[test]
+    #[serial]
     fn find_device() {
         let co2 = CO2Monitor::default().unwrap();
         assert_eq!(co2.device_info.vendor_id(), CO2MON_HID_VENDOR_ID);
         assert_eq!(co2.device_info.product_id(), CO2MON_HID_PRODUCT_ID);
     }
     #[test]
+    #[serial]
     fn read_message(){
         let mut co2 = CO2Monitor::default().unwrap();
         let result = co2.read_data(true, 50);
-        dbg!(result);
+        dbg!(result.unwrap());
     }
     #[test]
+    #[serial]
     fn get_info_test(){
         let co2 = CO2Monitor::default().unwrap();
-        let info = co2.get_info();
+        let info = co2.info();
         dbg!(info);
 
     }
