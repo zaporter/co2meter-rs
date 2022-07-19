@@ -1,6 +1,6 @@
 [package]
 name = "co2meter-rs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 description = "Rust library to iteract with co2meters. This is an implementation of the CO2meter python libary (https://github.com/vfilimonov/co2meter)"
@@ -10,9 +10,10 @@ readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+#default=["serde"]
 
 [dependencies]
 hidapi = "1.4.1"
-chrono = "0.4.19"
-serde = {version="1.0.139", optional=true}
+serde = {version="1.0.139", features=["derive"], optional=true}
 serial_test = "0.8.0"

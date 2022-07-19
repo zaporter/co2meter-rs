@@ -13,10 +13,9 @@
 //!
 //! ```ignore
 //! let mut co2 = CO2Monitor::default()?;
-//! let result = co2.read_data(true, 50)?;
+//! let result = co2.read_data(50)?;
 //! dbg!(result);
-//! # Ok(())
-//! # }
+//! 
 //! ```
 //!
 //! # Get info about your co2 monitor: 
@@ -36,8 +35,10 @@
 
 use std::error::Error;
 
-use chrono::{DateTime, Local};
 use hidapi::{HidApi, DeviceInfo, HidDevice};
+
+#[cfg(feature="serde")]
+use serde::{Serialize, Deserialize};
 
 const CO2MON_HID_VENDOR_ID : u16 = 0x04d9;
 const CO2MON_HID_PRODUCT_ID : u16 = 0xa052;
@@ -92,7 +93,6 @@ fn get_magic_word() -> [u8;8]{
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct CO2Reading{
-    pub time: Option<DateTime<Local>>,
     pub co2_ppm: u32,
     pub temp_c: f32,
 }
@@ -239,7 +239,7 @@ impl CO2Monitor {
             _ =>(None,None),
         }
     }
-    fn read_data_inner(&mut self, record_time: bool, max_requests: u32) -> Result<CO2Reading, Box<dyn Error>>{
+    fn read_data_inner(&mut self, max_requests: u32) -> Result<CO2Reading, Box<dyn Error>>{
         let mut co2 : Option<u32> = None;
         let mut temp : Option<f32> = None;
         let mut request_num = 0;
@@ -255,7 +255,6 @@ impl CO2Monitor {
             request_num += 1;
         }
         Ok(CO2Reading {
-            time : if record_time {Some(chrono::offset::Local::now())} else {None},
             co2_ppm: co2.ok_or("Unable to read the co2 in the allotted number of requests")?,
             temp_c : temp.ok_or("Unable to read the temperature in the allotted number of requests")?,
         })
@@ -263,15 +262,12 @@ impl CO2Monitor {
     }
     /// Returns a [CO2Reading] if successful. 
     /// 
-    /// `record_time` should be `true` if you want the `time` value in the result to be set.
-    /// Otherwise it will be left as `None`. 
-    /// 
     /// `max_requests` specifies the number of times to poll the device. A reccomeneded value is
     /// `50`
     ///
-    pub fn read_data(&mut self, record_time: bool, max_requests: u32) -> Result<CO2Reading, Box<dyn Error>>{
+    pub fn read_data(&mut self, max_requests: u32) -> Result<CO2Reading, Box<dyn Error>>{
         self.hid_open(true)?;
-        let result = self.read_data_inner(record_time, max_requests);
+        let result = self.read_data_inner( max_requests);
         self.hid_close()?;
         result
     }
@@ -298,7 +294,7 @@ mod tests{
     #[serial]
     fn read_message(){
         let mut co2 = CO2Monitor::default().unwrap();
-        let result = co2.read_data(true, 50);
+        let result = co2.read_data( 50);
         dbg!(result.unwrap());
     }
     #[test]
