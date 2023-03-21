@@ -1,4 +1,4 @@
-# Intro
+# co2meter-rs
 
 An unofficial rust clone of the fantastic co2meter library avaiable here https://github.com/vfilimonov/co2meter
 
@@ -6,7 +6,7 @@ If you like this library, please give your appreciation to Vladimir Filimonov (h
 
 Check out the reposity on crates.io https://crates.io/crates/co2meter-rs
 
-# Supported Features
+## Supported Features
 [X] basic reading from the sensor
 
 [ ] homekit
